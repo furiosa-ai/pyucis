@@ -36,7 +36,7 @@ from ucis.statement_id import StatementId
 from ucis.ucis import UCIS
 
 from lxml import etree as et
-from lxml.etree import QName, tounicode, SubElement
+from lxml.etree import QName, tounicode, SubElement, tostring
 
 import getpass
 
@@ -55,12 +55,12 @@ class XmlWriter():
         self.db = db
 
         # Map each of the source files to a unique identifier
-        self.file_id_m = {
-            "__null__file__" : 1}
+#        self.file_id_m = {
+#            "__null__file__" : 1}
         self.find_all_files(db.scopes(ScopeTypeT.ALL)) # TODO: need to handle mask
         
-        self.root = et.Element(QName(XmlWriter.UCIS, "UCIS"), nsmap={
-#        self.root = et.Element("UCIS", nsmap={
+#        self.root = et.Element(QName(XmlWriter.UCIS, "UCIS"), nsmap={
+        self.root = et.Element("UCIS", nsmap={
             "ucis" : XmlWriter.UCIS
             })
         # TODO: these aren't really UCIS properties
@@ -138,7 +138,7 @@ class XmlWriter():
             cgElem = self.mkElem(inst, "covergroupCoverage")
 #            self.setAttr(cgElem, "weight", str(scope.getWeight()))
                 
-            self.write_coverinstance(cgElem, cg.getScopeName(), cg)
+            #self.write_coverinstance(cgElem, cg.getScopeName(), cg)
             
             for ci in cg.scopes(ScopeTypeT.COVERINSTANCE):
                 self.write_coverinstance(cgElem, cg.getScopeName(), ci)
@@ -192,11 +192,21 @@ class XmlWriter():
             self.setAttr(cpBinElem, "key", "0")
             
             # Now, add the coverage data
-            seq = self.mkElem(cpBinElem, "sequence")
-            contents = self.mkElem(seq, "contents")
+#            seq = self.mkElem(cpBinElem, "sequence")
+#            contents = self.mkElem(seq, "contents")
+#            self.setAttr(contents, "coverageCount", str(cov_data.data))
+#            seqValue = self.mkElem(seq, "seqValue")
+#            seqValue.text = "-1" # Note: this is a meaningless value
+
+#            cov_range = cp_bin.getRange()
+            range = self.mkElem(cpBinElem, "range")
+#            for f, t in cov_data.range:
+#                self.setAttr(range, "from", str(f))
+#                self.setAttr(range, "to", str(t))
+#            self.setAttr(range, "from", "0")
+#            self.setAttr(range, "to", "9")
+            contents = self.mkElem(range, "contents")
             self.setAttr(contents, "coverageCount", str(cov_data.data))
-            seqValue = self.mkElem(seq, "seqValue")
-            seqValue.text = "-1" # Note: this is a meaningless value
             
     def write_cross(self, cgInstElem, cr):
         crossElem = self.mkElem(cgInstElem, "cross")
@@ -204,10 +214,14 @@ class XmlWriter():
         self.setAttr(crossElem, "key", "0")
         self.write_options(crossElem, cr)
         
-        expr = ",".join([cr.getIthCrossedCoverpoint(i).getScopeName() 
-                         for i in range(cr.getNumCrossedCoverpoints())])
-        crossExpr = self.mkElem(crossElem, "crossExpr")
-        crossExpr.text = expr
+#        expr = ",".join([cr.getIthCrossedCoverpoint(i).getScopeName() 
+#                         for i in range(cr.getNumCrossedCoverpoints())])
+#        crossExpr = self.mkElem(crossElem, "crossExpr")
+#        crossExpr.text = expr
+        # Minho
+        for i in range(cr.getNumCrossedCoverpoints()):
+            crossExpr = self.mkElem(crossElem, "crossExpr")
+            crossExpr.text = cr.getIthCrossedCoverpoint(i).getScopeName()
         
         
         self.write_cross_bins(crossElem, cr.coverItems(CoverTypeT.CVGBIN))
@@ -219,10 +233,13 @@ class XmlWriter():
             crBinElem = self.mkElem(crossElem, "crossBin")
             self.setAttr(crBinElem, "name", cr_bin.getName())
             self.setAttr(crBinElem, "key", "0")
-            self.setAttr(crBinElem, "type", "default") # TOOD: illegal, ignore
+            #self.setAttr(crBinElem, "type", "default") # TOOD: illegal, ignore
             
-            index = self.mkElem(crBinElem, "index")
-            index.text = "-1" # Note: this is a meaningless value
+            #index = self.mkElem(crBinElem, "index")
+            #index.text = "-1" # Note: this is a meaningless value
+            for i in cov_data.index_tuple: 
+                index = self.mkElem(crBinElem, "index")
+                index.text = str(i)
             
             contents = self.mkElem(crBinElem, "contents")
             self.setAttr(contents, "coverageCount", str(cov_data.data))
@@ -243,7 +260,8 @@ class XmlWriter():
             
     def mkElem(self, p, name):
         # Creates a UCIS-qualified node
-        return SubElement(p, QName(XmlWriter.UCIS, name))
+#        return SubElement(p, QName(XmlWriter.UCIS, name))
+        return SubElement(p, name)
         
     def setAttr(self, e, name, val):
 #        e.set(QName(XmlWriter.UCIS, name), val)
