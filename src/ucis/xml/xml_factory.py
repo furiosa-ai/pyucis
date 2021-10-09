@@ -38,11 +38,11 @@ class XmlFactory():
         else:
             fp = file_or_filename
 
-        try:            
-            validate_ucis_xml(fp)
-        except:
-            if type(file_or_filename) == str:
-                fp.close()
+#        try:            
+#            validate_ucis_xml(fp)
+#        except:
+#            if type(file_or_filename) == str:
+#                fp.close()
             
 
         fp.seek(0)

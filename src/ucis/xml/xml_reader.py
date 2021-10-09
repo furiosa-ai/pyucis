@@ -193,15 +193,16 @@ class XmlReader():
             
     def readCoverpointBin(self, cpBin, cp):
         srcinfo = None
-        seq = next(cpBin.iter("sequence"))
-        contents = next(seq.iter("contents"))
+        range = next(cpBin.iter("range"))
+        contents = next(range.iter("contents"))
         
         cp.createBin(
             self.getAttr(cpBin, "name", "default"),
             srcinfo,
             1,
             self.getAttrInt(contents, "coverageCount"),
-            self.getAttr(cpBin, "name", "default"))
+            self.getAttr(cpBin, "name", "default"),
+            None)
         
     def readCross(self, crN, cp_m, covergroup_scope):
         crossExpr = next(crN.iter("crossExpr"))
@@ -239,7 +240,8 @@ class XmlReader():
             srcinfo,
             1, # weight
             self.getAttrInt(contentsN, "coverageCount"),
-            "") # TODO:
+            "",
+            None) # TODO:
         
 
     def readStatementId(self, stmt_idN):
