@@ -147,8 +147,11 @@ class XmlWriter():
         cgInstElem = self.mkElem(cgElem, "cgInstance")
         self.setAttr(cgInstElem, "name", cg.getScopeName())
         self.setAttr(cgInstElem, "key", "0")
-        
-        self.write_options(cgInstElem, cg)
+         
+        # Minho
+        cgOptions = self.mkElem(cgInstElem, "options")
+        self.setAttrBool(cgOptions, "per_instance", cg.getPerInstance())
+        #self.write_options(cgInstElem, cg)
         
         cgIdElem = self.mkElem(cgInstElem, "cgId")
         self.setAttr(cgIdElem, "cgName", cgName)

@@ -129,6 +129,7 @@ class XmlReader():
         # TODO: Creating a coverage instance depends on
         # having a du_type
         module_scope_name = self.getAttr(instN, "moduleName", "default")
+        print("module scope name", module_scope_name)
         
         type_scope = self.getScope(
             module_scope_name, 
@@ -154,19 +155,20 @@ class XmlReader():
         
         for cgN in cg.iter("cgInstance"):
             srcinfo = None
+
             if cg_typescope is None:
+                cgId = next(cgN.iter("cgId"))
                 cg_typescope = inst_scope.createCovergroup(
-                    self.getAttr(cgN, "name", "default"),
+                    self.getAttr(cgId, "cgName", "default"),
                     srcinfo,
                     1,
                     UCIS_OTHER)
-                covergroup_scope = cg_typescope
-            else:
-                covergroup_scope = cg_typescope.createCoverInstance(
-                    self.getAttr(cgN, "name", "default"),
-                    srcinfo,
-                    1,
-                    UCIS_OTHER)
+
+            covergroup_scope = cg_typescope.createCoverInstance(
+                self.getAttr(cgN, "name", "default"),
+                srcinfo,
+                1,
+                UCIS_OTHER)
                 
             cp_m = {}
                 

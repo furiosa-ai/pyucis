@@ -49,7 +49,7 @@ class CoverageReportBuilder(object):
         cg_r = CoverageReport.Covergroup(
             cg_n.getScopeName(),
             cg_n.getScopeName())
-        
+
         cg_r.weight = cg_n.getWeight()
         
         for cp_in in cg_n.scopes(ScopeTypeT.COVERPOINT):
@@ -74,10 +74,12 @@ class CoverageReportBuilder(object):
             coverage += cr.coverage * cr.weight
             div += cr.weight
             
-        coverage /= div
+        #coverage /= div
+        if div != 0:
+            coverage /= div
             
         cg_r.coverage = round(coverage, 2)
-        
+
         return cg_r
 
     def build_coverpoint(self, cp_n : Coverpoint):
