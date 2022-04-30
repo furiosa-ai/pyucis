@@ -45,13 +45,10 @@ class Coverpoint(CvgScope):
             srcinfo : SourceInfo,
             at_least : int,
             count : int,
-# Minho
-#            range : list,
-            index_tuple : tuple,
-#
-            rhs : str) -> CoverIndex:
+            rhs : str,
+            kind = UCIS_CVGBIN) -> CoverIndex:
         coverdata = CoverData(
-            UCIS_CVGBIN,
+            kind,
             (UCIS_IS_32BIT|UCIS_HAS_GOAL|UCIS_HAS_WEIGHT))
         coverdata.data = count
         coverdata.at_least = at_least
