@@ -45,17 +45,17 @@ class Coverpoint(CvgScope):
             srcinfo : SourceInfo,
             at_least : int,
             count : int,
+            index_tuple : tuple,    # Minho
             rhs : str,
             kind = UCIS_CVGBIN) -> CoverIndex:
         coverdata = CoverData(
-            kind,
+            UCIS_CVGBIN,
             (UCIS_IS_32BIT|UCIS_HAS_GOAL|UCIS_HAS_WEIGHT))
         coverdata.data = count
         coverdata.at_least = at_least
         coverdata.goal = 1
         # TODO: bring weight in via API?
         coverdata.weight = 1
-#        coverdata.range = range
         coverdata.index_tuple = index_tuple
         
         index = self.createNextCover(
